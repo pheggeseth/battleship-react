@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import './Board.css';
-import { ColumnLabels, RowLabels, Square } from './BoardStyles';
+import { StyledBoard, ColumnLabels, RowLabels, Square } from './BoardStyles';
 
 const columnLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 const rowNumbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
@@ -40,12 +39,12 @@ class Board extends Component {
 		);
 		
 		return (
-			<div className="board">
+			<StyledBoard>
 				<div></div>
 				<ColumnLabels>{columnLetters.map(letter => <Square key={letter}>{letter}</Square>)}</ColumnLabels>
 				<RowLabels>{rowNumbers.map(number => <Square key={number}>{number}</Square>)}</RowLabels>
 				{squares}
-			</div>
+			</StyledBoard>
 		);
 	} // end render
 } // end Board
