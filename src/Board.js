@@ -13,7 +13,7 @@ class Board extends Component {
 	} // end constructor
 	
 	shipAtPosition(position) {
-		let shipPositions = Object.entries(this.props.positions);
+		let shipPositions = Object.entries(this.props.playerPositions);
 		for (let ship of shipPositions) if (ship[1].includes(position)) return ship[0];
 		return null;
 	} // end shipAtPosition
@@ -24,7 +24,7 @@ class Board extends Component {
 		this.setState(prevState => ({shots: [...prevState.shots, position]}));
 		
 		let ship = this.shipAtPosition(position);
-		this.props[ship ? 'onHit' : 'onMiss'](this.props.player, ship);
+		this.props[ship ? 'onHit' : 'onMiss'](this.props.playerName, ship);
 	} // end shoot
 	
 	render() {
@@ -32,7 +32,7 @@ class Board extends Component {
 			array.concat(columnLetters.map(col => 
 				<Square key={col+row} onClick={() => this.shoot(col+row)}>
 					{this.state.shots.includes(col+row) ?
-						this.shipAtPosition(col+row) ? 'X' : 'O'
+				    this.shipAtPosition(col+row) ? 'X' : 'O'
 						: ''}
 				</Square>
 			)), []

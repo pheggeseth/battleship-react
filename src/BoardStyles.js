@@ -11,7 +11,6 @@ export const StyledBoard = styled.div`
    grid-template-columns: repeat(11, 1fr);
    grid-template-rows: repeat(11, 1fr);
 `;
-
 export const ColumnLabels = styled.div`
 	grid-row: 1 / span 1;
 	grid-column: 2 / span 10;
