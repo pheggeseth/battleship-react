@@ -18,7 +18,8 @@ Two-Player Real-Time Battleship web app using React.
     - should pointer be at end of ship, or "square" of ship that was clicked?
   - [ ] when all ships are placed, ask player to confirm ship placements (ready to play)
 
-- [ ] convert Board component to generic Board just with styling
-  - [ ] add a GameBoard component wrapper to Board which adds shooting functionality
+- [x] convert Board component to generic Board just with styling
+  - [x] consider switching where letters and numbers go
+  - [x] add a GameBoard component wrapper to Board which adds shooting functionality
   - [ ] add a PlacementBoard component wrapper to Board which lets player place ships
     - [ ] both of these wrappers need a way to tell which square was clicked

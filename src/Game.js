@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Board from './Board';
+import GameBoard from './GameBoard';
 
 const ships = {
   carrier: 5,
@@ -37,12 +37,12 @@ export default class Game extends Component {
   render() {
     return (
       <div>
-        <Board 
+        <GameBoard 
           playerName={this.props.player1.name} 
           playerPositions={this.props.player1.positions} 
           onHit={this.hit} 
           onMiss={this.miss} />
-        <Board 
+        <GameBoard 
           playerName={this.props.player2.name} 
           playerPositions={this.props.player2.positions} 
           onHit={this.hit} 

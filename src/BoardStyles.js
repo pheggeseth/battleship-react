@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledBoard = styled.div`
+export const BoardGrid = styled.div`
    height: 300px;
    width: 300px;
    margin: 10px;
