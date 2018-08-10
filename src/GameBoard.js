@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Board, { boardRows, boardColumns } from './Board';
+import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
 
 export default class GameBoard extends Component {
@@ -29,28 +29,19 @@ export default class GameBoard extends Component {
   } // end shoot
   
   render() {
-    // uses the boardColumns array [1-10] and boardRows [A-J]
-    // to create one flat array of Square components with positions
-    // A1, A2, A3, etc.
-    // This array is filled into the board grid from left to right, top to bottom.
-    const squaresArray = boardColumns.reduce((array, columnNumber) => 
-      array.concat(
-        boardRows.map(rowLetter => {
-          let position = rowLetter+columnNumber;
-          return (
-            <Square key={position} onClick={() => this.shoot(position)}>
-              {this.state.shots.includes(position) ?
-                this.shipAtPosition(position) ? 'X' : 'O'
-                : ''}
-            </Square>
-          );
-        })
-      ),
-    []);
-    return (
-      <Board>
-        {squaresArray}
-      </Board>
-    );
+    // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
+    const squares = [];
+    for(let i = 0; i < 100; i++) {
+      let position = positionFromIndex(i);
+      squares.push(
+        <Square key={position} onClick={() => this.shoot(position)}>
+          {this.state.shots.includes(position) ?
+            this.shipAtPosition(position) ? 'X' : 'O'
+            : ''}
+        </Square>
+      );
+    }
+
+    return <Board>{squares}</Board>;
   }
 }
