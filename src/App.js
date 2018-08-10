@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import Game from './Game';
+//import Game from './Game';
+import PlacementBoard from './PlacementBoard';
 
 const player1 = {
   name: 'Paul',
@@ -26,6 +27,7 @@ const player2 = {
 
 export default class App extends Component {
   render() {
-    return <Game player1={player1} player2={player2}/>;
+    //return <Game player1={player1} player2={player2}/>;
+    return <PlacementBoard />
   }
 }
