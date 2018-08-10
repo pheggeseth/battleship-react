@@ -1,1 +1,24 @@
 Two-Player Real-Time Battleship web app using React.
+- [ ] player either signs up or logs in
+  - [ ] upon login, player arrives at Lobby
+    - Lobby has:
+      - [ ] list of friends who are currently logged in
+      - [ ] 
+- [ ] players should choose ship positions
+  - Layout
+    - [ ] basic board
+    - [ ] list of ships next to it
+  - [ ] clicking on ship type sets active ship for placement
+  - [ ] hovering over board with active ship causes certain squares to change color
+    - [ ] hovering over a square with a ship that's already placed causes hovering to change to red
+      - [ ] don't allow placement of ship overlapping another ship
+    - [ ] have toggle button for vertical/horizontal placement
+  - [ ] clicking on square with active ship places the ship on the board
+  - [ ] clicking on a placed ship should allow you to reposition the ship
+    - should pointer be at end of ship, or "square" of ship that was clicked?
+  - [ ] when all ships are placed, ask player to confirm ship placements (ready to play)
+
+- [ ] convert Board component to generic Board just with styling
+  - [ ] add a GameBoard component wrapper to Board which adds shooting functionality
+  - [ ] add a PlacementBoard component wrapper to Board which lets player place ships
+    - [ ] both of these wrappers need a way to tell which square was clicked

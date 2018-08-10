@@ -30,11 +30,3 @@ export default class App extends Component {
     return <Game player1={player1} player2={player2}/>;
   }
 }
-
-// function hit(player, ship) {
-// 	console.log(`Hit ${player}'s ${ship}.`);
-// }
-
-// function miss() {
-//   console.log('miss');
-// }
