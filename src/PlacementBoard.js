@@ -32,6 +32,7 @@ export default class PlacementBoard extends Component {
         destroyer: []
       },
       currentShip: 'battleship',
+      currentDirection: 'horizontal',
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
@@ -42,7 +43,7 @@ export default class PlacementBoard extends Component {
   toggleSquareHover(e) {
     let hovering;
     if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.getCurrentShipPositions(this.state.currentShip, e.target.dataset.position, 'vertical');
+    if (e.type === 'mouseenter') hovering = this.getCurrentShipPositions(this.state.currentShip, e.target.dataset.position, this.state.currentDirection);
     hovering = hovering.map(position => {
       for(let ship in this.state.shipPositions) {
         if (this.state.shipPositions[ship].includes(position) && ship !== this.state.currentShip) {
@@ -81,6 +82,7 @@ export default class PlacementBoard extends Component {
   }
 
   saveCurrentShipPositions() {
+    if(!this.state.hovering.length) return;
     for (let position of this.state.hovering) {
       if (!position || position.includes('!')) return;
     }
