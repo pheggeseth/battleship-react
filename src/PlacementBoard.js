@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
+import PlacementSelectors from './PlacementSelectors';
 
 /* 
 A1 A2 A3
@@ -38,6 +39,8 @@ export default class PlacementBoard extends Component {
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
     this.getCurrentShipPositions = this.getCurrentShipPositions.bind(this);
     this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
+    this.setCurrentShip = this.setCurrentShip.bind(this);
+    this.setCurrentDirection = this.setCurrentDirection.bind(this);
   }
 
   toggleSquareHover(e) {
@@ -97,6 +100,18 @@ export default class PlacementBoard extends Component {
     });
   }
 
+  setCurrentShip(newShip) {
+    this.setState({
+      currentShip: newShip
+    });
+  }
+
+  setCurrentDirection(newDirection) {
+    this.setState({
+      currentDirection: newDirection
+    });
+  }
+
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
@@ -104,11 +119,9 @@ export default class PlacementBoard extends Component {
       let squarePosition = positionFromIndex(i);
       
       let color = 'lightblue';
-      let shipInSquare;
       for (let ship in this.state.shipPositions) {
         if (this.state.shipPositions[ship].includes(squarePosition)) {
           color = 'lightgreen';
-          shipInSquare = ship;
           break;
         }
       }
@@ -130,9 +143,16 @@ export default class PlacementBoard extends Component {
     } // end for loop
 
     return (
-      <Board>
-        {squares}
-      </Board>
+      <div>
+        <Board>
+          {squares}
+        </Board>
+        <PlacementSelectors 
+        currentShip={this.state.currentShip}
+        currentDirection={this.state.currentDirection}
+        changeShip={this.setCurrentShip}
+        changeDirection={this.setCurrentDirection} />
+      </div>
     );
   }
 }
