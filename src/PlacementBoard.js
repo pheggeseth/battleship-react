@@ -35,21 +35,28 @@ export default class PlacementBoard extends Component {
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.getShipPositions = this.getShipPositions.bind(this);
-    this.setShipPositions = this.setShipPositions.bind(this);
+    this.getCurrentShipPositions = this.getCurrentShipPositions.bind(this);
+    this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
   }
 
   toggleSquareHover(e) {
     let hovering;
     if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.getShipPositions(this.state.currentShip, e.target.dataset.position, 'vertical');
-    
+    if (e.type === 'mouseenter') hovering = this.getCurrentShipPositions(this.state.currentShip, e.target.dataset.position, 'vertical');
+    hovering = hovering.map(position => {
+      for(let ship in this.state.shipPositions) {
+        if (this.state.shipPositions[ship].includes(position) && ship !== this.state.currentShip) {
+          return '!'+position;
+        }
+      }
+      return position;
+    });
     this.setState({
       hovering: hovering
     });
   }
 
-  getShipPositions(ship, startingPosition, direction) {
+  getCurrentShipPositions(ship, startingPosition, direction) {
     const shipSize = shipSizes[ship];
     const positions = [startingPosition];
     let [row, column] = [startingPosition[0], Number(startingPosition.slice(1))];
@@ -65,8 +72,13 @@ export default class PlacementBoard extends Component {
     return positions;
   }
 
-  setShipPositions() {
-    if (!this.state.hovering.every(e => e)) return;
+  saveCurrentShipPositions() {
+    let hoveringValid;
+    for (let position of this.state.hovering) {
+      if (!position || position.includes('!')) return;
+    }
+
+    //if (!this.state.hovering.every(e => e)) return;
     this.setState(prevState => {
       prevState.shipPositions[prevState.currentShip] = prevState.hovering;
       return {
@@ -92,12 +104,17 @@ export default class PlacementBoard extends Component {
         }
       }
       if (this.state.hovering.includes(squarePosition)) {
-        if (shipInSquare && shipInSquare !== this.state.currentShip) {
-          color = 'lightpink';
-        } else {
-          color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
-        }
-      }
+        color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
+      } 
+      if (this.state.hovering.includes('!'+squarePosition)) color = 'lightpink';
+
+      // if (this.state.hovering.includes(squarePosition)) {
+      //   if (shipInSquare && shipInSquare !== this.state.currentShip) {
+      //     color = 'lightpink';
+      //   } else {
+      //     color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
+      //   }
+      // }
 
       let squareStyle = {backgroundColor: color};
       
@@ -107,7 +124,7 @@ export default class PlacementBoard extends Component {
           data-position={squarePosition} 
           onMouseEnter={this.toggleSquareHover} 
           onMouseLeave={this.toggleSquareHover} 
-          onClick={this.setShipPositions}/>
+          onClick={this.saveCurrentShipPositions}/>
       );
     } // end for loop
 
