@@ -27,7 +27,7 @@ const player2 = {
 
 export default class App extends Component {
   render() {
-    return <Game player1={player1} player2={player2}/>;
-    //return <PlacementBoard />
+    //return <Game player1={player1} player2={player2}/>;
+    return <PlacementBoard />
   }
 }

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { BoardGrid, ColumnLabels, RowLabels, Square } from './BoardStyles';
 
-const boardRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-const boardColumns = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const boardRows = 'A B C D E F G H I J'.split(' ');
+const boardColumns = '1 2 3 4 5 6 7 8 9 10'.split(' ');
 
 export function positionFromIndex(index) {
 	let row = String.fromCharCode(Math.floor(index / 10 + 65));
