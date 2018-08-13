@@ -31,9 +31,10 @@ export default class PlacementBoard extends Component {
   }
 
   toggleSquareHover(e) {
-    this.setState({
-      hovering: this.shipPositions('carrier', e.target.dataset.position, 'vertical')
-    });
+    let hovering;
+    if (e.type === 'mouseleave') hovering = [];
+    if (e.type === 'mouseenter') hovering = this.shipPositions('carrier', e.target.dataset.position, 'vertical');
+    this.setState({hovering});
   }
 
   shipPositions(ship, startingPosition, direction) {
