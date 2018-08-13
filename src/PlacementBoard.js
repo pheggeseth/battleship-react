@@ -14,7 +14,7 @@ if orientation is vertical, add remaining square positions to positions array by
 
 const shipSizes = Object.freeze({
   carrier: 5,
-  battleship: 5,
+  battleship: 4,
   cruiser: 3,
   submarine: 3,
   destroyer: 2
@@ -25,13 +25,13 @@ export default class PlacementBoard extends Component {
     super();
     this.state = {
       shipPositions: {
-        carrier: [],
+        carrier: ['A1', 'B1', 'C1', 'D1', 'E1'],
         battleship: [],
         cruiser: [],
         submarine: [],
         destroyer: []
       },
-      currentShip: 'carrier',
+      currentShip: 'battleship',
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
@@ -42,7 +42,8 @@ export default class PlacementBoard extends Component {
   toggleSquareHover(e) {
     let hovering;
     if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.getShipPositions('carrier', e.target.dataset.position, 'vertical');
+    if (e.type === 'mouseenter') hovering = this.getShipPositions(this.state.currentShip, e.target.dataset.position, 'vertical');
+    
     this.setState({
       hovering: hovering
     });
@@ -81,13 +82,25 @@ export default class PlacementBoard extends Component {
     const squares = [];
     for(let i = 0; i < 100; i++) {
       let squarePosition = positionFromIndex(i);
-      let color;
-      if (this.state.hovering.includes(squarePosition)) {
-        color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
-      } else {
-        color = 'lightblue';
+      
+      let color = 'lightblue';
+      let shipInSquare;
+      for (let ship in this.state.shipPositions) {
+        if (this.state.shipPositions[ship].includes(squarePosition)) {
+          color = 'lightgreen';
+          shipInSquare = ship;
+        }
       }
+      if (this.state.hovering.includes(squarePosition)) {
+        if (shipInSquare && shipInSquare !== this.state.currentShip) {
+          color = 'lightpink';
+        } else {
+          color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
+        }
+      }
+
       let squareStyle = {backgroundColor: color};
+      
       squares.push(
         <Square key={squarePosition} 
           style={squareStyle} 
@@ -96,7 +109,7 @@ export default class PlacementBoard extends Component {
           onMouseLeave={this.toggleSquareHover} 
           onClick={this.setShipPositions}/>
       );
-    }
+    } // end for loop
 
     return (
       <Board>
