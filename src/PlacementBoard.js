@@ -24,20 +24,31 @@ export default class PlacementBoard extends Component {
   constructor() {
     super();
     this.state = {
-      hovering: ''
+      shipPositions: {
+        carrier: [],
+        battleship: [],
+        cruiser: [],
+        submarine: [],
+        destroyer: []
+      },
+      currentShip: 'carrier',
+      hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.shipPositions = this.shipPositions.bind(this);
+    this.getShipPositions = this.getShipPositions.bind(this);
+    this.setShipPositions = this.setShipPositions.bind(this);
   }
 
   toggleSquareHover(e) {
     let hovering;
     if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.shipPositions('carrier', e.target.dataset.position, 'vertical');
-    this.setState({hovering});
+    if (e.type === 'mouseenter') hovering = this.getShipPositions('carrier', e.target.dataset.position, 'vertical');
+    this.setState({
+      hovering: hovering
+    });
   }
 
-  shipPositions(ship, startingPosition, direction) {
+  getShipPositions(ship, startingPosition, direction) {
     const shipSize = shipSizes[ship];
     const positions = [startingPosition];
     let [row, column] = [startingPosition[0], Number(startingPosition.slice(1))];
@@ -51,6 +62,18 @@ export default class PlacementBoard extends Component {
       }
     }
     return positions;
+  }
+
+  setShipPositions() {
+    console.log(`${this.state.currentShip}: ${this.state.hovering}`);
+    this.setState(prevState => {
+      prevState.shipPositions[prevState.currentShip] = prevState.hovering;
+      return {
+        shipPositions: prevState.shipPositions,
+        // currentShip: '',
+        hovering: []
+      };
+    });
   }
 
   render() {
@@ -70,7 +93,8 @@ export default class PlacementBoard extends Component {
           style={squareStyle} 
           data-position={squarePosition} 
           onMouseEnter={this.toggleSquareHover} 
-          onMouseLeave={this.toggleSquareHover}/>
+          onMouseLeave={this.toggleSquareHover} 
+          onClick={this.setShipPositions}/>
       );
     }
 
