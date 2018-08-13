@@ -65,7 +65,6 @@ export default class PlacementBoard extends Component {
   }
 
   setShipPositions() {
-    console.log(`${this.state.currentShip}: ${this.state.hovering}`);
     if (!this.state.hovering.every(e => e)) return;
     this.setState(prevState => {
       prevState.shipPositions[prevState.currentShip] = prevState.hovering;
