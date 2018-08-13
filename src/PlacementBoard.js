@@ -27,7 +27,7 @@ export default class PlacementBoard extends Component {
       shipPositions: {
         carrier: ['A1', 'B1', 'C1', 'D1', 'E1'],
         battleship: [],
-        cruiser: [],
+        cruiser: ['G1', 'G2', 'G3'],
         submarine: [],
         destroyer: []
       },
@@ -58,27 +58,33 @@ export default class PlacementBoard extends Component {
 
   getCurrentShipPositions(ship, startingPosition, direction) {
     const shipSize = shipSizes[ship];
-    const positions = [startingPosition];
+    const positions = [];
     let [row, column] = [startingPosition[0], Number(startingPosition.slice(1))];
-    for (let i = 1; i < shipSize; i++) {
-      if (direction === 'horizontal') column += 1;
-      if (direction === 'vertical') row = String.fromCharCode(row.charCodeAt() + 1);
+    for (let i = 0; i < shipSize; i++) {
       if (row.charCodeAt() > 74 || column > 10) {
         positions.push(null);
       } else {
-        positions.push(row+column);
+        let flag = '';
+        for (let ship in this.state.shipPositions) {
+          if (this.state.shipPositions[ship].includes(row+column) && ship !== this.state.currentShip) {
+            flag = '!';
+            break;
+          }
+        }
+        positions.push(flag+row+column);
       }
+      if (direction === 'horizontal') column += 1;
+      if (direction === 'vertical') row = String.fromCharCode(row.charCodeAt() + 1);
     }
+
     return positions;
   }
 
   saveCurrentShipPositions() {
-    let hoveringValid;
     for (let position of this.state.hovering) {
       if (!position || position.includes('!')) return;
     }
 
-    //if (!this.state.hovering.every(e => e)) return;
     this.setState(prevState => {
       prevState.shipPositions[prevState.currentShip] = prevState.hovering;
       return {
@@ -101,20 +107,13 @@ export default class PlacementBoard extends Component {
         if (this.state.shipPositions[ship].includes(squarePosition)) {
           color = 'lightgreen';
           shipInSquare = ship;
+          break;
         }
       }
-      if (this.state.hovering.includes(squarePosition)) {
+      if (this.state.hovering.includes(squarePosition)){
         color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
       } 
       if (this.state.hovering.includes('!'+squarePosition)) color = 'lightpink';
-
-      // if (this.state.hovering.includes(squarePosition)) {
-      //   if (shipInSquare && shipInSquare !== this.state.currentShip) {
-      //     color = 'lightpink';
-      //   } else {
-      //     color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
-      //   }
-      // }
 
       let squareStyle = {backgroundColor: color};
       
