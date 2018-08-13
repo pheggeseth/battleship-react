@@ -12,7 +12,13 @@ if orientation is horizontal, add remaining square positions to positions array 
 if orientation is vertical, add remaining square positions to positions array by incrementing row letter
 */
 
-
+const shipSizes = Object.freeze({
+  carrier: 5,
+  battleship: 5,
+  cruiser: 3,
+  submarine: 3,
+  destroyer: 2
+});
 
 export default class PlacementBoard extends Component {
   constructor() {
@@ -25,22 +31,12 @@ export default class PlacementBoard extends Component {
   }
 
   toggleSquareHover(e) {
-    //let hovering = e.target.dataset.position
-    //console.log(this.shipPositions('carrier', hovering, 'horizontal'));
-    
     this.setState({
       hovering: this.shipPositions('carrier', e.target.dataset.position, 'vertical')
     });
   }
 
   shipPositions(ship, startingPosition, direction) {
-    const shipSizes = {
-      carrier: 5,
-      battleship: 5,
-      cruiser: 3,
-      submarine: 3,
-      destroyer: 2
-    };
     const shipSize = shipSizes[ship];
     const positions = [startingPosition];
     let [row, column] = [startingPosition[0], Number(startingPosition.slice(1))];
