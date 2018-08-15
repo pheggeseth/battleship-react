@@ -1,18 +1,10 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
 import PlacementSelectors from './PlacementSelectors';
 
-/* 
-A1 A2 A3
-B1 B2 B3
-C1 C2 C3
-need array of positions where ship is
-on square hover, initialize the positions array to the position of the hovered square
-if orientation is horizontal, add remaining square positions to positions array by incrementing column number
-if orientation is vertical, add remaining square positions to positions array by incrementing row letter
-*/
-
+// GLOBAL VARIABLES & FUNCTIONS
 const shipSizes = Object.freeze({
   carrier: 5,
   battleship: 4,
@@ -21,14 +13,41 @@ const shipSizes = Object.freeze({
   destroyer: 2
 });
 
+// nullArray -> returns an array of size 'size' filled with 'null'
+const nullArray = size => Array(size).fill(null);
+
+
+// nextRow -> takes a character and returns the character resulting from that character's charCode incremented by the provided amount
+const nextRow = (letter, increment) => String.fromCharCode(letter.charCodeAt() + increment);
+
+
+// addPositions -> a closure which establishes a context with the starting rowstarting column,
+// and then returns one of two functions which will increment either the row letter or column number
+// based on the provided direction, or "null" if the resulting position would be off the board. 
+// (meaning the column is greater than 10, or the row is greater than 'J')
+// Example: ('A1', 'horizontal') => 'A2'; ('B3', 'vertical') => 'C3'; ('A10', 'horizontal') => 'null' ('A11')
+const addPositions = (start, direction) => {
+  const [rowStart, colStart] = [start[0], Number(start.slice(1))];
+  const addingFunctions = {
+    horizontal: (element, index) => colStart+index > 10 ? null : rowStart + (colStart+index),
+    vertical: (element, index) => nextRow(rowStart, index) > 'J' ? null : nextRow(rowStart, index) + colStart
+  }
+  return addingFunctions[direction];
+};
+
+
+const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
+
+
+// REACT COMPONENT
 export default class PlacementBoard extends Component {
   constructor() {
     super();
     this.state = {
       shipPositions: {
-        carrier: ['A1', 'B1', 'C1', 'D1', 'E1'],
+        carrier: [],
         battleship: [],
-        cruiser: ['G1', 'G2', 'G3'],
+        cruiser: [],
         submarine: [],
         destroyer: []
       },
@@ -37,64 +56,43 @@ export default class PlacementBoard extends Component {
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.getCurrentShipPositions = this.getCurrentShipPositions.bind(this);
+    // this.getCurrentHoveringPositions = this.getCurrentHoveringPositions.bind(this);
+    this.getHoveringPositions = this.getHoveringPositions.bind(this);
     this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
     this.setCurrentShip = this.setCurrentShip.bind(this);
     this.setCurrentDirection = this.setCurrentDirection.bind(this);
   }
 
+  getHoveringPositions(startPosition) {
+    const s = this.state;
+    const currentShipSize = shipSizes[s.currentShip];
+    
+    const positions = nullArray(currentShipSize).map(addPositions(startPosition, s.currentDirection));
+    const nonCurrentShipPositions = _.flatten(_.values(_.omit(s.shipPositions, s.currentShip)));
+
+    return positions.map(flagIfOverlapping(nonCurrentShipPositions));
+  }
+
   toggleSquareHover(e) {
     let hovering;
     if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.getCurrentShipPositions(this.state.currentShip, e.target.dataset.position, this.state.currentDirection);
-    hovering = hovering.map(position => {
-      for(let ship in this.state.shipPositions) {
-        if (this.state.shipPositions[ship].includes(position) && ship !== this.state.currentShip) {
-          return '!'+position;
-        }
-      }
-      return position;
-    });
+    if (e.type === 'mouseenter') hovering = this.getHoveringPositions(e.target.dataset.position);
+    
     this.setState({
       hovering: hovering
     });
   }
 
-  getCurrentShipPositions(ship, startingPosition, direction) {
-    const shipSize = shipSizes[ship];
-    const positions = [];
-    let [row, column] = [startingPosition[0], Number(startingPosition.slice(1))];
-    for (let i = 0; i < shipSize; i++) {
-      if (row.charCodeAt() > 74 || column > 10) {
-        positions.push(null);
-      } else {
-        let flag = '';
-        for (let ship in this.state.shipPositions) {
-          if (this.state.shipPositions[ship].includes(row+column) && ship !== this.state.currentShip) {
-            flag = '!';
-            break;
-          }
-        }
-        positions.push(flag+row+column);
-      }
-      if (direction === 'horizontal') column += 1;
-      if (direction === 'vertical') row = String.fromCharCode(row.charCodeAt() + 1);
-    }
-
-    return positions;
-  }
-
   saveCurrentShipPositions() {
-    if(!this.state.hovering.length) return;
+    if(!this.state.hovering.length) return; // if not hovering
     for (let position of this.state.hovering) {
-      if (!position || position.includes('!')) return;
+      if (!position || position.includes('!')) return; // if any position is null or flagged as overlapping
     }
 
-    this.setState(prevState => {
-      prevState.shipPositions[prevState.currentShip] = prevState.hovering;
+    this.setState(p => { // p is prevState
+      p.shipPositions[p.currentShip] = p.hovering;
       return {
-        shipPositions: prevState.shipPositions,
-        // currentShip: '',
+        shipPositions: p.shipPositions,
         hovering: []
       };
     });
@@ -116,8 +114,9 @@ export default class PlacementBoard extends Component {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
     for(let i = 0; i < 100; i++) {
-      let squarePosition = positionFromIndex(i);
+      let squarePosition = positionFromIndex(i); // convert the index to the appropriate board position
       
+      // refactor the color picking into separate functions
       let color = 'lightblue';
       for (let ship in this.state.shipPositions) {
         if (this.state.shipPositions[ship].includes(squarePosition)) {
@@ -136,6 +135,7 @@ export default class PlacementBoard extends Component {
         <Square key={squarePosition} 
           style={squareStyle} 
           data-position={squarePosition} 
+          data-index={i}
           onMouseEnter={this.toggleSquareHover} 
           onMouseLeave={this.toggleSquareHover} 
           onClick={this.saveCurrentShipPositions}/>
