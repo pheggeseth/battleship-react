@@ -35,10 +35,13 @@ const addPositions = (start, direction) => {
   return addingFunctions[direction];
 };
 
-// mapping function for flaggin an element of 'positions' with a '!' if it is the same as 'position'
+// mapping function for flagging an element of 'positions' with a '!' if it is the same as 'position'
 // this is used to check if any hovering positions overlap with a currently placed ship
 const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
 
+const hasFlagOrNull = position => position.includes('!') || position === null;
+
+const invalidHoveringPosition = positions => !positions.length || _.some(positions, hasFlagOrNull);
 
 // REACT COMPONENT
 export default class PlacementBoard extends Component {
@@ -66,7 +69,6 @@ export default class PlacementBoard extends Component {
   getHoveringPositions(startPosition) {
     const s = this.state;
     const currentShipSize = shipSizes[s.currentShip];
-    
     const positions = nullArray(currentShipSize).map(addPositions(startPosition, s.currentDirection));
     const nonCurrentShipPositions = _.flatten(_.values(_.omit(s.shipPositions, s.currentShip)));
 
@@ -84,10 +86,7 @@ export default class PlacementBoard extends Component {
   }
 
   saveCurrentShipPositions() {
-    if(!this.state.hovering.length) return; // if not hovering
-    for (let position of this.state.hovering) {
-      if (!position || position.includes('!')) return; // if any position is null or flagged as overlapping
-    }
+    if(invalidHoveringPosition(this.state.hovering)) return;
 
     this.setState(p => { // p is prevState
       p.shipPositions[p.currentShip] = p.hovering;
@@ -113,29 +112,29 @@ export default class PlacementBoard extends Component {
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
+    const shipPositionsFlatArray = _.flatten(_.values(this.state.shipPositions));
+    const hoveringPositions = this.state.hovering;
+    const hoveringOffBoard = !hoveringPositions.every(position => position); // true if any hovering positions are null
     for(let i = 0; i < 100; i++) {
-      let squarePosition = positionFromIndex(i); // convert the index to the appropriate board position
+      const squarePosition = positionFromIndex(i); // convert the index to the appropriate board position, ie: 0 -> 'A1', 99 -> 'J10'
       
-      // refactor the color picking into separate functions
-      let color = 'lightblue';
-      for (let ship in this.state.shipPositions) {
-        if (this.state.shipPositions[ship].includes(squarePosition)) {
-          color = 'lightgreen';
-          break;
-        }
-      }
-      if (this.state.hovering.includes(squarePosition)){
-        color = this.state.hovering.every(e => e) ? 'lightyellow' : 'lightpink';
-      } 
-      if (this.state.hovering.includes('!'+squarePosition)) color = 'lightpink';
+      let color = 'lightblue'; // default square color
 
+      // squares with ships in them should be green
+      if (shipPositionsFlatArray.includes(squarePosition)) color = 'lightgreen';
+
+      // if a ship is hovering over a square, color it yellow, or pink if the hovering ship is not entirely on the board
+      if (hoveringPositions.includes(squarePosition)) color = hoveringOffBoard ? 'lightpink' : 'lightyellow';
+
+      // color the square pink if it includes both a placed ship and a hovering ship (placement conflict)
+      if (hoveringPositions.includes('!' + squarePosition)) color = 'lightpink';
+      
       let squareStyle = {backgroundColor: color};
       
       squares.push(
         <Square key={squarePosition} 
           style={squareStyle} 
           data-position={squarePosition} 
-          data-index={i}
           onMouseEnter={this.toggleSquareHover} 
           onMouseLeave={this.toggleSquareHover} 
           onClick={this.saveCurrentShipPositions}/>
