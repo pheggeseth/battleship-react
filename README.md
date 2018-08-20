@@ -15,15 +15,15 @@ User Lobby
 
 Game Start
 - [ ] ship placement board
-  - [ ] player chooses currentShip by clicking buttons
-  - [ ] player chooses currentDirection by clicking buttons
-    - [ ] clicking on ship type sets active ship for placement
-    - [ ] selecting that ship again should set currentShip to null
-  - [ ] after selecting ship, hovering over board shows potential ship position by changing look of appropriate squares
-    - [ ] invalid squares (off board or currently occupied by different ship) look different
-  - [ ] click on a square confirms the placement of the ship, stores the positions in shipPositions
-    - [ ] clicking while there are invalid squares prevents saving the positions
-    - [ ] squares with placed ships in them look different
+  - [x] player chooses currentShip by clicking buttons
+  - [x] player chooses currentDirection by clicking buttons
+    - [x] clicking on ship type sets active ship for placement
+      - [ ] eventually have toggling button group
+  - [x] after selecting ship, hovering over board shows potential ship position by changing look of appropriate squares
+    - [x] invalid squares (off board or currently occupied by different ship) look different
+  - [x] click on a square confirms the placement of the ship, stores the positions in shipPositions
+    - [x] clicking while there are invalid squares prevents saving the positions
+    - [x] squares with placed ships in them look different
 - [ ] ship placement finished
   - [ ] when all ships are placed, display Ready button
     - [ ] clicking Ready button confirms that the player is ready to play
@@ -31,4 +31,4 @@ Game Start
 
 Wish List
 - [ ] placing ship disables that ship button, clears out currentShip
-  - [ ] clicking on placed ship makes it possible to replace the ship
+  - [ ] clicking on placed ship makes it possible to move and place the ship again
