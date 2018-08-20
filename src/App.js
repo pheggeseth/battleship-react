@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Game from './Game';
-import PlacementBoard from './PlacementBoard';
+import HomeBoard from './HomeBoard';
 
 const player1 = {
   name: 'Paul',
@@ -30,8 +30,8 @@ export default class App extends Component {
     
     return (
     <div>
-      <Game player1={player1} player2={player2}/>
-      <PlacementBoard />
+      <Game player1={player1} player2={player2} />
+      <HomeBoard />
     </div>);
   }
 }

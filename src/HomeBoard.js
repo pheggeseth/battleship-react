@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
-import PlacementSelectors from './PlacementSelectors';
+import ShipSelectors from './ShipSelectors';
 
 // GLOBAL VARIABLES & FUNCTIONS
 const shipSizes = Object.freeze({
@@ -44,7 +44,7 @@ const isInvalid = position => position === null || position.includes('!');
 const invalidHoveringPosition = positions => !positions.length || _.some(positions, isInvalid);
 
 // REACT COMPONENT
-export default class PlacementBoard extends Component {
+export default class HomeBoard extends Component {
   constructor() {
     super();
     this.state = {
@@ -147,7 +147,7 @@ export default class PlacementBoard extends Component {
         <Board size="300px">
           {squares}
         </Board>
-        <PlacementSelectors 
+        <ShipSelectors 
         currentShip={this.state.currentShip}
         currentDirection={this.state.currentDirection}
         changeShip={this.setCurrentShip}

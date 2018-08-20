@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
 
-export default class GameBoard extends Component {
+export default class AttackBoard extends Component {
   constructor(props) {
 		super(props);
 		this.state = {
