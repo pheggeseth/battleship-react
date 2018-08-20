@@ -42,6 +42,6 @@ export default class GameBoard extends Component {
       );
     }
 
-    return <Board>{squares}</Board>;
+    return <Board size="500px">{squares}</Board>;
   }
 }

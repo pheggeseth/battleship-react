@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const BoardGrid = styled.div`
-   height: 300px;
-   width: 300px;
+   height: ${props => props.size};
+   width: ${props => props.size};
    margin: 10px;
    border-right: 1px solid;
    border-bottom: 1px solid;

@@ -144,7 +144,7 @@ export default class PlacementBoard extends Component {
 
     return (
       <div>
-        <Board>
+        <Board size="300px">
           {squares}
         </Board>
         <PlacementSelectors 
