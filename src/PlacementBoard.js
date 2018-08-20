@@ -39,9 +39,9 @@ const addPositions = (start, direction) => {
 // this is used to check if any hovering positions overlap with a currently placed ship
 const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
 
-const hasFlagOrNull = position => position.includes('!') || position === null;
+const isInvalid = position => position === null || position.includes('!');
 
-const invalidHoveringPosition = positions => !positions.length || _.some(positions, hasFlagOrNull);
+const invalidHoveringPosition = positions => !positions.length || _.some(positions, isInvalid);
 
 // REACT COMPONENT
 export default class PlacementBoard extends Component {
@@ -55,8 +55,8 @@ export default class PlacementBoard extends Component {
         submarine: [],
         destroyer: []
       },
-      currentShip: 'battleship',
-      currentDirection: 'horizontal',
+      currentShip: '',
+      currentDirection: '',
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
@@ -68,6 +68,7 @@ export default class PlacementBoard extends Component {
 
   getHoveringPositions(startPosition) {
     const s = this.state;
+    if (!s.currentShip || !s.currentDirection) return [];
     const currentShipSize = shipSizes[s.currentShip];
     const positions = nullArray(currentShipSize).map(addPositions(startPosition, s.currentDirection));
     const nonCurrentShipPositions = _.flatten(_.values(_.omit(s.shipPositions, s.currentShip)));
