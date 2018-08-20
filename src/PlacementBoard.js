@@ -35,7 +35,8 @@ const addPositions = (start, direction) => {
   return addingFunctions[direction];
 };
 
-
+// mapping function for flaggin an element of 'positions' with a '!' if it is the same as 'position'
+// this is used to check if any hovering positions overlap with a currently placed ship
 const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
 
 
@@ -56,7 +57,6 @@ export default class PlacementBoard extends Component {
       hovering: []
     };
     this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    // this.getCurrentHoveringPositions = this.getCurrentHoveringPositions.bind(this);
     this.getHoveringPositions = this.getHoveringPositions.bind(this);
     this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
     this.setCurrentShip = this.setCurrentShip.bind(this);
