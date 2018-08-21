@@ -13,22 +13,10 @@ const ships = {
 Game
   - state
     - ships: {
-      player1: {
-        carrier: 5,
-        battleship: 4,
-        cruiser: 3,
-        submarine: 3,
-        destroyer: 2
-      },
-      player2: {
-        carrier: 5,
-        battleship: 4,
-        cruiser: 3,
-        submarine: 3,
-        destroyer: 2
-      }
+      player1: ships,
+      player2: ships
     }
-    - shots: [
+    - shots: [ each shot is object:
       {
         shootingPlayer: string,
         position: string,
@@ -45,29 +33,13 @@ export default class Game extends Component {
     super(props);
     
     this.state = {
-      // [this.props.player1.name]: Object.assign({}, ships),
-      // [this.props.player2.name]: Object.assign({}, ships),
       player1: Object.assign({}, ships),
       player2: Object.assign({}, ships),
       shots: []
     };
 
-    // this.hit = this.hit.bind(this);
-    // this.miss = this.miss.bind(this);
     this.recordShot = this.recordShot.bind(this);
   } // end constructor
-
-  // hit(playerName, shipName) {
-  //   this.setState(prevState => {
-  //     prevState[playerName][shipName] -= 1;
-  //     console.log(`${prevState[playerName][shipName] ? 'Hit' : 'Sunk'} ${playerName}'s ${shipName}.`);
-  //     return prevState;
-  //   });
-  // }
-
-  // miss() {
-  //   console.log('Miss.');
-  // }
 
   recordShot(shot) {
     const shootingPlayer = shot.shootingPlayer;
@@ -83,21 +55,11 @@ export default class Game extends Component {
       }
       return prevState;
     });
-  }
+  } // end recordShot
 
   render() {
     return (
       <div>
-        {/* <AttackBoard 
-          playerName={this.props.player1.name} 
-          playerPositions={this.props.player1.positions} 
-          onHit={this.hit} 
-          onMiss={this.miss} />
-        <AttackBoard 
-          playerName={this.props.player2.name} 
-          playerPositions={this.props.player2.positions} 
-          onHit={this.hit} 
-          onMiss={this.miss} /> */}
         <GameBoard 
           player="player1"
           shots={this.state.shots}
@@ -108,8 +70,8 @@ export default class Game extends Component {
           onShot={this.recordShot} />
       </div>
     );
-  }
-}
+  } // end render
+} // end Game
 
 /*
   shot = {

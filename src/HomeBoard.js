@@ -4,45 +4,6 @@ import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
 import ShipSelectors from './ShipSelectors';
 
-// GLOBAL VARIABLES & FUNCTIONS
-const shipSizes = Object.freeze({
-  carrier: 5,
-  battleship: 4,
-  cruiser: 3,
-  submarine: 3,
-  destroyer: 2
-});
-
-// nullArray -> returns an array of size 'size' filled with 'null'
-const nullArray = size => Array(size).fill(null);
-
-
-// nextRow -> takes a character and returns the character resulting from that character's charCode incremented by the provided amount
-const nextRow = (letter, increment) => String.fromCharCode(letter.charCodeAt() + increment);
-
-
-// addPositions -> a closure which establishes a context with the starting rowstarting column,
-// and then returns one of two functions which will increment either the row letter or column number
-// based on the provided direction, or "null" if the resulting position would be off the board. 
-// (meaning the column is greater than 10, or the row is greater than 'J')
-// Example: ('A1', 'horizontal') => 'A2'; ('B3', 'vertical') => 'C3'; ('A10', 'horizontal') => 'null' ('A11')
-const addPositions = (start, direction) => {
-  const [rowStart, colStart] = [start[0], Number(start.slice(1))];
-  const addingFunctions = {
-    horizontal: (element, index) => colStart+index > 10 ? null : rowStart + (colStart+index),
-    vertical: (element, index) => nextRow(rowStart, index) > 'J' ? null : nextRow(rowStart, index) + colStart
-  }
-  return addingFunctions[direction];
-};
-
-// mapping function for flagging an element of 'positions' with a '!' if it is the same as 'position'
-// this is used to check if any hovering positions overlap with a currently placed ship
-const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
-
-const isInvalid = position => position === null || position.includes('!');
-
-const invalidHoveringPosition = positions => !positions.length || _.some(positions, isInvalid);
-
 // REACT COMPONENT
 export default class HomeBoard extends Component {
   constructor() {
@@ -142,15 +103,11 @@ export default class HomeBoard extends Component {
       );
     } // end for loop
 
+    const gridPosition = "grid-area: 1 / 1 / span 1 / span 1;"; // board position within the GameBoard grid
+
     return (
-      <div style={{
-        // width: '375px',
-        // float: 'left',
-        // display: 'grid',
-        // gridTemplateColumns: '1',
-        // gridTemplateRows: '2'
-      }}>
-        <Board size="300px" gridPosition="grid-area: 1 / 1 / span 1 / span 1;">
+      <div>
+        <Board size="300px" gridPosition={gridPosition}>
           {squares}
         </Board>
         {/* <ShipSelectors 
@@ -162,3 +119,42 @@ export default class HomeBoard extends Component {
     );
   }
 }
+
+// GLOBAL VARIABLES & FUNCTIONS
+const shipSizes = Object.freeze({
+  carrier: 5,
+  battleship: 4,
+  cruiser: 3,
+  submarine: 3,
+  destroyer: 2
+});
+
+// nullArray -> returns an array of size 'size' filled with 'null'
+const nullArray = size => Array(size).fill(null);
+
+
+// nextRow -> takes a character and returns the character resulting from that character's charCode incremented by the provided amount
+const nextRow = (letter, increment) => String.fromCharCode(letter.charCodeAt() + increment);
+
+
+// addPositions -> a closure which establishes a context with the starting rowstarting column,
+// and then returns one of two functions which will increment either the row letter or column number
+// based on the provided direction, or "null" if the resulting position would be off the board. 
+// (meaning the column is greater than 10, or the row is greater than 'J')
+// Example: ('A1', 'horizontal') => 'A2'; ('B3', 'vertical') => 'C3'; ('A10', 'horizontal') => 'null' ('A11')
+const addPositions = (start, direction) => {
+  const [rowStart, colStart] = [start[0], Number(start.slice(1))];
+  const addingFunctions = {
+    horizontal: (element, index) => colStart+index > 10 ? null : rowStart + (colStart+index),
+    vertical: (element, index) => nextRow(rowStart, index) > 'J' ? null : nextRow(rowStart, index) + colStart
+  }
+  return addingFunctions[direction];
+};
+
+// mapping function for flagging an element of 'positions' with a '!' if it is the same as 'position'
+// this is used to check if any hovering positions overlap with a currently placed ship
+const flagIfOverlapping = positions => position => positions.includes(position) ? '!'+position : position;
+
+const isInvalid = position => position === null || position.includes('!');
+
+const invalidHoveringPosition = positions => !positions.length || _.some(positions, isInvalid);
