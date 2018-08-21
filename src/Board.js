@@ -13,7 +13,7 @@ export function positionFromIndex(index) {
 export default class Board extends Component {
 	render() {
 		return (
-			<BoardGrid size={this.props.size}>
+			<BoardGrid gridPosition={this.props.gridPosition}>
 				<div></div>
 				<ColumnLabels>{boardColumns.map(number => <Square key={number}>{number}</Square>)}</ColumnLabels>
 				<RowLabels>{boardRows.map(letter => <Square key={letter}>{letter}</Square>)}</RowLabels>

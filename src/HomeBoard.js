@@ -143,15 +143,21 @@ export default class HomeBoard extends Component {
     } // end for loop
 
     return (
-      <div>
-        <Board size="300px">
+      <div style={{
+        // width: '375px',
+        // float: 'left',
+        // display: 'grid',
+        // gridTemplateColumns: '1',
+        // gridTemplateRows: '2'
+      }}>
+        <Board size="300px" gridPosition="grid-area: 1 / 1 / span 1 / span 1;">
           {squares}
         </Board>
-        <ShipSelectors 
+        {/* <ShipSelectors 
         currentShip={this.state.currentShip}
         currentDirection={this.state.currentDirection}
         changeShip={this.setCurrentShip}
-        changeDirection={this.setCurrentDirection} />
+        changeDirection={this.setCurrentDirection} /> */}
       </div>
     );
   }
