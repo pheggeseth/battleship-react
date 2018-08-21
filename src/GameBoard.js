@@ -92,6 +92,8 @@ export default class GameBoard extends Component {
   }
 
   handleShot(position) {
+    if (this.props.shots.find(shot => shot.shootingPlayer === this.props.player && shot.position === position)) return;
+
     this.props.onShot({
       shootingPlayer: this.props.player,
       position: position,
@@ -106,7 +108,7 @@ export default class GameBoard extends Component {
       <AttackBoard 
         playerPositions={this.state.positions} 
         // only send shots enemy has made, for rendering
-        shots={this.props.shots.filter(shot => shot.shootingPlayer !== this.props.player)}
+        shots={this.props.shots.filter(shot => shot.shootingPlayer === this.props.player)}
         onClick={this.handleShot} />;
     }
     
