@@ -103,18 +103,11 @@ export default class HomeBoard extends Component {
       );
     } // end for loop
 
-    const gridPosition = "grid-area: 1 / 1 / span 1 / span 1;"; // board position within the GameBoard grid
-
     return (
       <div>
-        <Board size="300px" gridPosition={gridPosition}>
+        <Board>
           {squares}
         </Board>
-        {/* <ShipSelectors 
-        currentShip={this.state.currentShip}
-        currentDirection={this.state.currentDirection}
-        changeShip={this.setCurrentShip}
-        changeDirection={this.setCurrentDirection} /> */}
       </div>
     );
   }

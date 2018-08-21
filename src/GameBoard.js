@@ -7,8 +7,40 @@ const GameGrid  = styled.div`
   float: left;
   margin: 10px;
   display: grid;
-  grid-template-rows: 300px 400px;
-  grid-template-columns: 300px 400px;
+  grid-template-rows: 300px 150px 50px;
+  grid-template-columns: 300px 300px;
+  grid-gap: 10px;
+`;
+
+const EnemyHits = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: auto / auto / span 2 / span 1;
+`;
+
+const ChatHistory = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ChatPrompt = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const shipIfHit = (position, positions) => {
@@ -80,9 +112,17 @@ export default class GameBoard extends Component {
     
     return (
       <GameGrid>
-        <HomeBoard 
-          onClick={this.handleShipPlacement} />
+        <HomeBoard onClick={this.handleShipPlacement} />
         {attackBoard}
+        <ChatHistory>
+          Chat/Shot History
+        </ChatHistory>
+        <EnemyHits>
+          Hits on enemy ships
+        </EnemyHits>
+        <ChatPrompt>
+          Chat Prompt
+        </ChatPrompt>
       </GameGrid>
     );
   }

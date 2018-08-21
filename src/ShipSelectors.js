@@ -1,6 +1,12 @@
 import React from 'react';
 
-export default function PlacementSelectors(props) {
+// <ShipSelectors 
+//   currentShip={this.state.currentShip}
+//   currentDirection={this.state.currentDirection}
+//   changeShip={this.setCurrentShip}
+//   changeDirection={this.setCurrentDirection} />
+
+export default function ShipSelectors(props) {
   return (
     <div>
       <div>

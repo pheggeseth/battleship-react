@@ -26,7 +26,7 @@ export default class AttackBoard extends Component {
         </Square>
       );
     }
-
-    return <Board size="400px" gridPosition="grid-area: 2 / 2 / span 1 / span 1;">{squares}</Board>;
+    
+    return <Board>{squares}</Board>;
   }
 }

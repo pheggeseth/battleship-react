@@ -3,10 +3,9 @@ import styled from 'styled-components';
 export const BoardGrid = styled.div`
    height: ${props => props.size || '100%'};
    width: ${props => props.size || '100%'};
-  //  margin: 10px;
    border-right: 1px solid;
    border-bottom: 1px solid;
-  //  float: left;
+   box-sizing: border-box;
   ${props => props.gridPosition || '' }
    display: grid;
    grid-template-columns: repeat(11, 1fr);
