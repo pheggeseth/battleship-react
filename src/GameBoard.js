@@ -92,6 +92,8 @@ export default class GameBoard extends Component {
   }
 
   handleShot(position) {
+    if (this.props.shots.find(shot => shot.shootingPlayer === this.props.player && shot.position === position)) return;
+
     this.props.onShot({
       shootingPlayer: this.props.player,
       position: position,
