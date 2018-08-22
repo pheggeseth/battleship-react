@@ -30,13 +30,12 @@ export default class AttackBoard extends Component {
     const squares = [];
     for(let i = 0; i < 100; i++) {
       let position = positionFromIndex(i);
-      let style = {backgroundColor: getBackgroundColor(position, this.props.shots)};
+      let style = getBackgroundColor(position, this.props.shots);
       if (style.backgroundColor === 'powderblue' && this.state.hovering === position) {
         style.backgroundColor = 'lightyellow';
       }
       squares.push(
-        <Square 
-          key={position} 
+        <Square key={position} 
           data-position={position} 
           style={style} 
           onMouseEnter={this.toggleSquareHover}
@@ -52,5 +51,5 @@ const getBackgroundColor = (position, shots) => {
   let color = 'powderblue';
   let shot = shots.find(shot => shot.position === position);
   if (shot) color = shot.hit ? 'pink' : 'white';
-  return color;
+  return {backgroundColor: color};
 }

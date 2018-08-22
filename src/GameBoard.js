@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PlacementBoard from './PlacementBoard';
 import HomeBoard from './HomeBoard';
 import AttackBoard from './AttackBoard';
 import styled from 'styled-components';
@@ -114,7 +115,8 @@ export default class GameBoard extends Component {
     
     return (
       <GameGrid>
-        <HomeBoard onClick={this.handleShipPlacement} />
+        {/* <PlacementBoard onClick={this.handleShipPlacement} /> */}
+        <HomeBoard positions={this.state.positions} shots={this.props.shots.filter(shot => shot.shootingPlayer !== this.props.player)}/>
         {attackBoard}
         <ChatHistory>
           Chat/Shot History
