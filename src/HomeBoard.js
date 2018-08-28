@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
+// import _ from 'lodash';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
+import { shipColors } from './ShipSelectors';
 
 export default class HomeBoard extends Component {
   render() {
@@ -25,8 +26,13 @@ export default class HomeBoard extends Component {
 
 const getBackgroundColor = (squarePosition, shipPositions, shots) => {
   let color = 'powderblue';
-  if (_.some(_.flatten(_.values(shipPositions)), position => position === squarePosition)) {
-    color = 'lightgreen';
+  // if (_.some(_.flatten(_.values(shipPositions)), position => position === squarePosition)) {
+  //   color = 'lightgreen';
+  // }
+  for (let ship in shipPositions) {
+    if (shipPositions[ship].includes(squarePosition)) {
+      color = shipColors[ship];
+    }
   }
   let shot = shots.find(shot => shot.position === squarePosition);
   if (shot) {

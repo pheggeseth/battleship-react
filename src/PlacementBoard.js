@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import Board, { positionFromIndex } from './Board';
 import { Square } from './BoardStyles';
-import ShipSelectors from './ShipSelectors';
+import ShipSelectors, { shipColors } from './ShipSelectors';
 
 // REACT COMPONENT
 export default class PlacementBoard extends Component {
@@ -69,9 +69,9 @@ export default class PlacementBoard extends Component {
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
-    const shipPositionsFlatArray = _.flatten(_.values(this.props.shipPositions));
+    // const shipPositionsFlatArray = _.flatten(_.values(this.props.shipPositions));
     const hoveringPositions = this.state.hovering;
-    const hoveringOffBoard = !hoveringPositions.every(position => position); // true if any hovering positions are null
+    const hoveringOffBoard = hoveringPositions.some(position => position === null); // true if any hovering positions are null
 
     for(let i = 0; i < 100; i++) {
       const squarePosition = positionFromIndex(i); // convert the index to the appropriate board position, ie: 0 -> 'A1', 99 -> 'J10'
@@ -79,10 +79,15 @@ export default class PlacementBoard extends Component {
       let color = 'powderblue'; // default square color
 
       // squares with ships in them should be green
-      if (shipPositionsFlatArray.includes(squarePosition)) color = 'lightgreen';
+      // if (shipPositionsFlatArray.includes(squarePosition)) color = 'lightgreen';
+      for (let ship in this.props.shipPositions) {
+        if (this.props.shipPositions[ship].includes(squarePosition)) {
+          color = shipColors[ship];
+        }
+      }
 
       // if a ship is hovering over a square, color it yellow, or pink if the hovering ship is not entirely on the board
-      if (hoveringPositions.includes(squarePosition)) color = hoveringOffBoard ? 'lightpink' : 'lightyellow';
+      if (hoveringPositions.includes(squarePosition)) color = hoveringOffBoard ? 'lightpink' : 'lightcyan';
 
       // color the square pink if it includes both a placed ship and a hovering ship (placement conflict)
       if (hoveringPositions.includes('!' + squarePosition)) color = 'lightpink';
