@@ -53,8 +53,11 @@ export default class Game extends Component {
       prevState.shots.push(shot);
       if (shot.hit) {
         prevState.hitsLeft[shotPlayer][shot.hit] -= 1;
-        let hitOrSunk = prevState.hitsLeft[shotPlayer][shot.hit] ? 'hit' : 'sunk';
-        console.log(`${this.props[shootingPlayer]} ${hitOrSunk} ${this.props[shotPlayer]}'s ${shot.hit}.`);
+        if (prevState.hitsLeft[shotPlayer][shot.hit] === 0) {
+          console.log(`${this.props[shootingPlayer]} sunk ${this.props[shotPlayer]}'s ${shot.hit}!!!`);
+        } else {
+          console.log(`${this.props[shootingPlayer]} scored a hit!`);
+        }
       } else {
         console.log(`${this.props[shootingPlayer]} missed.`);
       }
