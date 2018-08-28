@@ -42,7 +42,8 @@ export default class Game extends Component {
           destroyer: 2
         }
       },
-      shots: []
+      shots: [],
+      chat: []
     };
 
     this.recordShot = this.recordShot.bind(this);
