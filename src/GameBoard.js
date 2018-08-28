@@ -13,16 +13,16 @@ const GameGrid  = styled.div`
   grid-gap: 10px;
 `;
 
-const EnemyHits = styled.div`
-  height: 100%;
-  width: 100%;
-  border: 1px solid;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  grid-area: auto / auto / span 2 / span 1;
-`;
+// const EnemyHits = styled.div`
+//   height: 100%;
+//   width: 100%;
+//   border: 1px solid;
+//   box-sizing: border-box;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   grid-area: auto / auto / span 2 / span 1;
+// `;
 
 const ChatHistory = styled.div`
   height: 100%;
@@ -61,21 +61,26 @@ export default class GameBoard extends Component {
     };
     this.handleShot = this.handleShot.bind(this);
     this.handleShipPlacement = this.handleShipPlacement.bind(this);
-    this.readyToPlay = this.readyToPlay.bind(this);
+    // this.readyToPlay = this.readyToPlay.bind(this);
+    this.handleReady = this.handleReady.bind(this);
   } // end constructor
 
   handleShipPlacement(ship) {
     this.props.onShipPlacement(this.props.player, ship);
   }
 
-  readyToPlay() {
-    this.setState({
-      readyToPlay: true
-    });
-    console.log(`${this.props.player} ready`);
-    // TODO: notify socket.io of ready to play, send positions
-    // display attack board when other player is ready to play
+  handleReady() {
+    this.props.onReady(this.props.player);
   }
+
+  // readyToPlay() {
+  //   this.setState({
+  //     readyToPlay: true
+  //   });
+  //   console.log(`${this.props.player} ready`);
+  //   // TODO: notify socket.io of ready to play, send positions
+  //   // display attack board when other player is ready to play
+  // }
 
   handleShot(position) {
     if (this.props.shots.find(shot => shot.shootingPlayer === this.props.player && shot.position === position)) return;
@@ -88,27 +93,28 @@ export default class GameBoard extends Component {
   }
   
   render() {
-    let placementBoard, homeBoard, attackBoard, chatHistory, enemyHits, chatPrompt;
+    let placementBoard, homeBoard, attackBoard, chatHistory, chatPrompt;
     const player = this.props.player;
     const shots = this.props.shots;
     const positions = this.props.positions;
-    if (this.state.readyToPlay === false) {
-      placementBoard = <PlacementBoard shipPositions={positions} onClick={this.handleShipPlacement} onReady={this.readyToPlay}/>;
-    } else {
+    if (this.props.ready[this.props.player]) {
       homeBoard = <HomeBoard positions={positions} shots={shots.filter(shotsEnemyMade(player))}/>;
       attackBoard = <AttackBoard 
         // only send shots enemy has made, for rendering
+        gameStart={this.props.ready.player1 && this.props.ready.player2}
         shots={shots.filter(shotsPlayerMade(player))}
         onClick={this.handleShot} />;
       chatHistory = <ChatHistory>
           Chat/Shot History
         </ChatHistory>;
-      enemyHits = <EnemyHits>
-          Hits on enemy ships
-        </EnemyHits>;
       chatPrompt = <ChatPrompt>
           Chat Prompt
         </ChatPrompt>;
+    } else {
+      placementBoard = <PlacementBoard 
+        shipPositions={positions} 
+        onClick={this.handleShipPlacement} 
+        onReady={this.handleReady}/>;
     }
     
     return (

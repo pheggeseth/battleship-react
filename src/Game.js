@@ -6,6 +6,10 @@ export default class Game extends Component {
     super(props);
     
     this.state = {
+      ready: {
+        player1: false,
+        player2: false
+      },
       positions: {
         player1: {
           carrier: ['A1', 'A2', 'A3', 'A4', 'A5'],
@@ -43,6 +47,7 @@ export default class Game extends Component {
 
     this.recordShot = this.recordShot.bind(this);
     this.saveShipPositions = this.saveShipPositions.bind(this);
+    this.playerReady = this.playerReady.bind(this);
   } // end constructor
 
   recordShot(shot) {
@@ -72,6 +77,13 @@ export default class Game extends Component {
     });
   }
 
+  playerReady(player) {
+    this.setState(prevState => {
+      prevState.ready[player] = true;
+      return prevState;
+    });
+  }
+
   render() {
     return (
       <div>
@@ -79,12 +91,16 @@ export default class Game extends Component {
           player="player1"
           positions={this.state.positions.player1}
           onShipPlacement={this.saveShipPositions}
+          ready={this.state.ready}
+          onReady={this.playerReady}
           shots={this.state.shots}
           onShot={this.recordShot} />
         <GameBoard 
           player="player2"
           positions={this.state.positions.player2}
           onShipPlacement={this.saveShipPositions}
+          ready={this.state.ready}
+          onReady={this.playerReady}
           shots={this.state.shots}
           onShot={this.recordShot} />
       </div>
