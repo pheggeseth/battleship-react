@@ -17,11 +17,13 @@ const GameGrid  = styled.div`
 const ChatHistory = styled.div`
   height: 100%;
   width: 100%;
+  padding: 10px;
   border: 1px solid;
   box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow-y: scroll;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
 `;
 
 const ChatPrompt = styled.div`
@@ -83,7 +85,16 @@ export default class Game extends Component {
     this.saveShipPositions = this.saveShipPositions.bind(this);
     this.playerReady = this.playerReady.bind(this);
     this.generatePlayerBoard = this.generatePlayerBoard.bind(this);
+    this.logChat = this.logChat.bind(this);
   } // end constructor
+
+  logChat(message) {
+    console.log(message);
+    this.setState(prevState => {
+      prevState.chat.push(<li key={prevState.chat.length}>{message}</li>);
+      return prevState;
+    });
+  }
 
   recordShot(player, position) {
     if (this.state.shots.find(shot => shot.shootingPlayer === player && shot.position === position)) return;
@@ -91,20 +102,25 @@ export default class Game extends Component {
     const shootingPlayer = shot.shootingPlayer;
     const shotPlayer = shootingPlayer === 'player1' ? 'player2' : 'player1';
     shot.hit = shipIfHit(shot.position, this.state.positions[shotPlayer]);
+    const shipHit = shot.hit;
     
+    // record shot, add hit to ship if needed and log correct message (in setState callback)
     this.setState(prevState => {
       prevState.shots.push(shot);
-      if (shot.hit) {
-        prevState.hitsLeft[shotPlayer][shot.hit] -= 1;
-        if (prevState.hitsLeft[shotPlayer][shot.hit] === 0) {
-          console.log(`${this.props[shootingPlayer]} sunk ${this.props[shotPlayer]}'s ${shot.hit}!!!`);
+      if (shipHit) prevState.hitsLeft[shotPlayer][shipHit] -= 1;
+      return prevState;
+    }, () => {
+      let message = `${this.props[shootingPlayer]} `;
+      if (shipHit) {
+        if(this.state.hitsLeft[shotPlayer][shipHit] === 0) {
+          message += `sunk ${this.props[shotPlayer]}'s ${shot.hit}!!!`;
         } else {
-          console.log(`${this.props[shootingPlayer]} scored a hit!`);
+          message += `scored a hit!`;
         }
       } else {
-        console.log(`${this.props[shootingPlayer]} missed.`);
+        message += `missed.`;
       }
-      return prevState;
+      this.logChat(message);
     });
   } // end recordShot
 
@@ -119,7 +135,7 @@ export default class Game extends Component {
     this.setState(prevState => {
       prevState.ready[player] = true;
       return prevState;
-    });
+    }, () => this.logChat(`${player} ready`));
   }
 
   generatePlayerBoard(player) {
@@ -127,23 +143,23 @@ export default class Game extends Component {
     const ready = this.state.ready[player];
     const board = [];
     if (ready === false) {
-      board.push(<PlacementBoard key={'PlacementBoard'}
+      board.push(<PlacementBoard key='PlacementBoard'
         player={player}
         shipPositions={positions} 
         onClick={this.saveShipPositions}
         onReady={this.playerReady}/>);
     } else {
-      board.push(<HomeBoard key={'HomeBoard'} positions={positions} shots={this.state.shots.filter(shot => shot.shootingPlayer !== player)}/>);
+      board.push(<HomeBoard key='HomeBoard' positions={positions} shots={this.state.shots.filter(shot => shot.shootingPlayer !== player)}/>);
       if (this.state.ready.player1 && this.state.ready.player2) {
-        board.push(<AttackBoard key={'AttackBoard'}
+        board.push(<AttackBoard key='AttackBoard'
           player={player}
           shots={this.state.shots.filter(shot => shot.shootingPlayer === player)}
           onClick={this.recordShot}/>)
       } else {
-        board.push(<BlankBoard key={'BlankBoard'} />);
+        board.push(<BlankBoard key='BlankBoard' />);
       }
-      board.push(<ChatHistory key={'ChatHistory'}>Chat/Shot History</ChatHistory>);
-      board.push(<ChatPrompt key={'ChatPrompt'}>Chat Prompt</ChatPrompt>);
+      board.push(<ChatHistory key='ChatHistory'><ul>{this.state.chat}</ul></ChatHistory>);
+      board.push(<ChatPrompt key='ChatPrompt'>Chat Prompt</ChatPrompt>);
     }
     return board;
   }
