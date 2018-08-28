@@ -63,8 +63,8 @@ export default class GameBoard extends Component {
 
     this.props.onShot({
       shootingPlayer: this.props.player,
-      position: position,
-      hit: shipIfHit(position, this.props.positions)
+      position: position//,
+      // hit: shipIfHit(position, this.props.positions)
     });
   }
   

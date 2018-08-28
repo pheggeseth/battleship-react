@@ -1,5 +1,39 @@
 import React, {Component} from 'react'
 import GameBoard from './GameBoard';
+import PlacementBoard from './PlacementBoard';
+import HomeBoard from './HomeBoard';
+import BlankBoard from './BlankBoard';
+import AttackBoard from './AttackBoard';
+import styled from 'styled-components';
+
+const GameGrid  = styled.div`
+  float: left;
+  margin: 10px;
+  display: grid;
+  grid-template-rows: 300px 300px 150px 50px;
+  grid-template-columns: 300px;
+  grid-gap: 10px;
+`;
+
+const ChatHistory = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ChatPrompt = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export default class Game extends Component {
   constructor(props) {
@@ -49,12 +83,19 @@ export default class Game extends Component {
     this.recordShot = this.recordShot.bind(this);
     this.saveShipPositions = this.saveShipPositions.bind(this);
     this.playerReady = this.playerReady.bind(this);
+    this.generatePlayerBoard = this.generatePlayerBoard.bind(this);
   } // end constructor
 
-  recordShot(shot) {
+  recordShot(player, position) {
+    if (this.state.shots.find(shot => shot.shootingPlayer === player && shot.position === position)) return;
+    const shot = {
+      shootingPlayer: player,
+      position: position
+    };
     const shootingPlayer = shot.shootingPlayer;
     const shotPlayer = shootingPlayer === 'player1' ? 'player2' : 'player1';
     shot.hit = shipIfHit(shot.position, this.state.positions[shotPlayer]);
+    
     this.setState(prevState => {
       prevState.shots.push(shot);
       if (shot.hit) {
@@ -85,36 +126,70 @@ export default class Game extends Component {
     });
   }
 
+  generatePlayerBoard(player) {
+    const positions = this.state.positions[player];
+    const ready = this.state.ready[player];
+    const board = [];
+    if (ready === false) {
+      board.push(<PlacementBoard key={'PlacementBoard'}
+        player={player}
+        shipPositions={positions} 
+        onClick={this.saveShipPositions}
+        onReady={this.playerReady}/>);
+    } else {
+      board.push(<HomeBoard key={'HomeBoard'} positions={positions} shots={this.state.shots.filter(shot => shot.shootingPlayer !== player)}/>);
+      if (this.state.ready.player1 && this.state.ready.player2) {
+        board.push(<AttackBoard key={'AttackBoard'}
+          player={player}
+          gameStart={this.state.ready.player1 && this.state.ready.player2} 
+          shots={this.state.shots.filter(shot => shot.shootingPlayer === player)}
+          onClick={this.recordShot}/>)
+      } else {
+        board.push(<BlankBoard key={'BlankBoard'} />);
+      }
+      board.push(<ChatHistory key={'ChatHistory'}/>);
+      board.push(<ChatPrompt key={'ChatPrompt'} />);
+    }
+    return board;
+  }
+  
   render() {
+    const player1Board = this.generatePlayerBoard('player1');
+    const player2Board = this.generatePlayerBoard('player2');
     return (
       <div>
-        <GameBoard 
-          player="player1"
-          positions={this.state.positions.player1}
-          onShipPlacement={this.saveShipPositions}
-          ready={this.state.ready}
-          onReady={this.playerReady}
-          shots={this.state.shots}
-          onShot={this.recordShot} />
-        <GameBoard 
-          player="player2"
-          positions={this.state.positions.player2}
-          onShipPlacement={this.saveShipPositions}
-          ready={this.state.ready}
-          onReady={this.playerReady}
-          shots={this.state.shots}
-          onShot={this.recordShot} />
+        <GameGrid>
+          {player1Board}
+        </GameGrid>
+        <GameGrid>
+          {player2Board}
+        </GameGrid>
       </div>
     );
-  } // end render
-} // end Game
-
-/*
-  shot = {
-    shootingPlayer: string,
-    position: string,
   }
-*/
+  // render() {
+  //   return (
+  //     <div>
+  //       <GameBoard 
+  //         player="player1"
+  //         positions={this.state.positions.player1}
+  //         onShipPlacement={this.saveShipPositions}
+  //         ready={this.state.ready}
+  //         onReady={this.playerReady}
+  //         shots={this.state.shots}
+  //         onShot={this.recordShot} />
+  //       <GameBoard 
+  //         player="player2"
+  //         positions={this.state.positions.player2}
+  //         onShipPlacement={this.saveShipPositions}
+  //         ready={this.state.ready}
+  //         onReady={this.playerReady}
+  //         shots={this.state.shots}
+  //         onShot={this.recordShot} />
+  //     </div>
+  //   );
+  // } // end render
+} // end Game
 
 const shipIfHit = (position, positions) => {
   for (let ship in positions) {
@@ -124,3 +199,10 @@ const shipIfHit = (position, positions) => {
   }
   return false;
 };
+
+/*
+  shot = {
+    shootingPlayer: string,
+    position: string,
+  }
+*/

@@ -18,6 +18,7 @@ export default class PlacementBoard extends Component {
     this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
     this.setCurrentShip = this.setCurrentShip.bind(this);
     this.setCurrentDirection = this.setCurrentDirection.bind(this);
+    this.handleReady = this.handleReady.bind(this);
   }
 
   getHoveringPositions(startPosition) {
@@ -44,7 +45,7 @@ export default class PlacementBoard extends Component {
   saveCurrentShipPositions() {
     if(invalidHoveringPosition(this.state.hovering)) return;
 
-    this.props.onClick({
+    this.props.onClick(this.props.player, {
       name: this.state.currentShip,
       positions: this.state.hovering
     });
@@ -64,6 +65,10 @@ export default class PlacementBoard extends Component {
     this.setState({
       currentDirection: newDirection
     });
+  }
+
+  handleReady() {
+    this.props.onReady(this.props.player);
   }
 
   render() {
@@ -106,7 +111,7 @@ export default class PlacementBoard extends Component {
 
     let confirmButton;
     if (allShipsPlaced(this.props.shipPositions)) {
-      confirmButton = <button onClick={this.props.onReady}>Ready to Play</button>;
+      confirmButton = <button onClick={this.handleReady}>Ready to Play</button>;
     }
     
 

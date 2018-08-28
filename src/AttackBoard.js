@@ -22,7 +22,7 @@ export default class AttackBoard extends Component {
   }
 
   handleClick(e) {
-    this.props.onClick(e.target.dataset.position);
+    this.props.onClick(this.props.player, e.target.dataset.position);
   }
   
   render() {
