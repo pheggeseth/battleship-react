@@ -8,8 +8,8 @@ const GameGrid  = styled.div`
   float: left;
   margin: 10px;
   display: grid;
-  grid-template-rows: 300px 150px 50px;
-  grid-template-columns: 300px 300px;
+  grid-template-rows: 300px 300px 150px 50px;
+  grid-template-columns: 300px;
   grid-gap: 10px;
 `;
 
@@ -117,7 +117,7 @@ export default class GameBoard extends Component {
         {homeBoard}
         {attackBoard}
         {chatHistory}
-        {enemyHits}
+        {/* {enemyHits} */}
         {chatPrompt}
       </GameGrid>
     );
