@@ -57,37 +57,22 @@ export default class GameBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // positions: {
-      //   carrier: [],
-      //   battleship: [],
-      //   cruiser: [],
-      //   submarine: [],
-      //   destroyer: []
-      // },
-      positions: { // default positions until PlacementBoard gets hooked up with GameBoard and supplies positions to it
-        carrier: ['A1', 'A2', 'A3', 'A4', 'A5'],
-        battleship: ['B1', 'B2', 'B3', 'B4'],
-        cruiser: ['C1', 'C2', 'C3'],
-        submarine: ['D1', 'D2', 'D3'],
-        destroyer: ['E1', 'E2']
-      },
-      readyToPlay: true // should be set to false to start
+      readyToPlay: false // should be set to false to start
     };
     this.handleShot = this.handleShot.bind(this);
+    this.handleShipPlacement = this.handleShipPlacement.bind(this);
+    this.readyToPlay = this.readyToPlay.bind(this);
   } // end constructor
 
   handleShipPlacement(ship) {
-    this.setState(prevState => {
-      prevState.positions[ship.name] = ship.positions;
-      return prevState;
-    });
+    this.props.onShipPlacement(this.props.player, ship);
   }
 
   readyToPlay() {
     this.setState({
       readyToPlay: true
     });
-    console.log(`this.props.player ready`);
+    console.log(`${this.props.player} ready`);
     // TODO: notify socket.io of ready to play, send positions
     // display attack board when other player is ready to play
   }
@@ -98,36 +83,46 @@ export default class GameBoard extends Component {
     this.props.onShot({
       shootingPlayer: this.props.player,
       position: position,
-      hit: shipIfHit(position, this.state.positions)
+      hit: shipIfHit(position, this.props.positions)
     });
   }
   
   render() {
-    let attackBoard = null;
-    if (this.state.readyToPlay) {
-      attackBoard = 
-      <AttackBoard 
-        playerPositions={this.state.positions} 
+    let placementBoard, homeBoard, attackBoard, chatHistory, enemyHits, chatPrompt;
+    const player = this.props.player;
+    const shots = this.props.shots;
+    const positions = this.props.positions;
+    if (this.state.readyToPlay === false) {
+      placementBoard = <PlacementBoard shipPositions={positions} onClick={this.handleShipPlacement} onReady={this.readyToPlay}/>;
+    } else {
+      homeBoard = <HomeBoard positions={positions} shots={shots.filter(shotsEnemyMade(player))}/>;
+      attackBoard = <AttackBoard 
         // only send shots enemy has made, for rendering
-        shots={this.props.shots.filter(shot => shot.shootingPlayer === this.props.player)}
+        shots={shots.filter(shotsPlayerMade(player))}
         onClick={this.handleShot} />;
+      chatHistory = <ChatHistory>
+          Chat/Shot History
+        </ChatHistory>;
+      enemyHits = <EnemyHits>
+          Hits on enemy ships
+        </EnemyHits>;
+      chatPrompt = <ChatPrompt>
+          Chat Prompt
+        </ChatPrompt>;
     }
     
     return (
       <GameGrid>
-        {/* <PlacementBoard onClick={this.handleShipPlacement} /> */}
-        <HomeBoard positions={this.state.positions} shots={this.props.shots.filter(shot => shot.shootingPlayer !== this.props.player)}/>
+        {placementBoard}
+        {homeBoard}
         {attackBoard}
-        <ChatHistory>
-          Chat/Shot History
-        </ChatHistory>
-        <EnemyHits>
-          Hits on enemy ships
-        </EnemyHits>
-        <ChatPrompt>
-          Chat Prompt
-        </ChatPrompt>
+        {chatHistory}
+        {enemyHits}
+        {chatPrompt}
       </GameGrid>
     );
   }
 }
+
+const shotsPlayerMade = player => shot => shot.shootingPlayer === player;
+const shotsEnemyMade = player => shot => shot.shootingPlayer !== player;

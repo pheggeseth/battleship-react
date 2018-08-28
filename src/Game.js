@@ -1,54 +1,59 @@
-import React, {Component} from 'react';
-// import AttackBoard from './AttackBoard';
+import React, {Component} from 'react'
 import GameBoard from './GameBoard';
-
-const ships = {
-  carrier: 5,
-  battleship: 4,
-  cruiser: 3,
-  submarine: 3,
-  destroyer: 2
-};
-/* 
-Game
-  - state
-    - ships: {
-      player1: ships,
-      player2: ships
-    }
-    - shots: [ each shot is object:
-      {
-        shootingPlayer: string,
-        position: string,
-        hit: shipName or false
-      }
-    ]
-  - props
-    - player1: 'name',
-    - player2: 'name'
-*/
 
 export default class Game extends Component {
   constructor(props) {
     super(props);
     
     this.state = {
-      player1: Object.assign({}, ships),
-      player2: Object.assign({}, ships),
+      positions: {
+        player1: {
+          carrier: ['A1', 'A2', 'A3', 'A4', 'A5'],
+          battleship: ['B1', 'B2', 'B3', 'B4'],
+          cruiser: ['C1', 'C2', 'C3'],
+          submarine: ['D1', 'D2', 'D3'],
+          destroyer: ['E1', 'E2']
+        },
+        player2: {
+          carrier: ['J6', 'J7', 'J8', 'J9', 'J10'],
+          battleship: ['I7', 'I8', 'I9', 'I10'],
+          cruiser: ['H8', 'H9', 'H10'],
+          submarine: ['G8', 'G9', 'G10'],
+          destroyer: ['F9', 'F10']
+        }
+      },
+      hitsLeft: {
+        player1: {
+          carrier: 5,
+          battleship: 4,
+          cruiser: 3,
+          submarine: 3,
+          destroyer: 2
+        },
+        player2: {
+          carrier: 5,
+          battleship: 4,
+          cruiser: 3,
+          submarine: 3,
+          destroyer: 2
+        }
+      },
       shots: []
     };
 
     this.recordShot = this.recordShot.bind(this);
+    this.saveShipPositions = this.saveShipPositions.bind(this);
   } // end constructor
 
   recordShot(shot) {
     const shootingPlayer = shot.shootingPlayer;
     const shotPlayer = shootingPlayer === 'player1' ? 'player2' : 'player1';
+    shot.hit = shipIfHit(shot.position, this.state.positions[shotPlayer]);
     this.setState(prevState => {
       prevState.shots.push(shot);
-      if (shot.hit) { // currently allows negative hits
-        prevState[shotPlayer][shot.hit] -= 1;
-        let hitOrSunk = prevState[shotPlayer][shot.hit] ? 'hit' : 'sunk';
+      if (shot.hit) {
+        prevState.hitsLeft[shotPlayer][shot.hit] -= 1;
+        let hitOrSunk = prevState.hitsLeft[shotPlayer][shot.hit] ? 'hit' : 'sunk';
         console.log(`${this.props[shootingPlayer]} ${hitOrSunk} ${this.props[shotPlayer]}'s ${shot.hit}.`);
       } else {
         console.log(`${this.props[shootingPlayer]} missed.`);
@@ -57,15 +62,26 @@ export default class Game extends Component {
     });
   } // end recordShot
 
+  saveShipPositions(player, ship) {
+    this.setState(prevState => {
+      prevState.positions[player][ship.name] = ship.positions;
+      return prevState;
+    });
+  }
+
   render() {
     return (
       <div>
         <GameBoard 
           player="player1"
+          positions={this.state.positions.player1}
+          onShipPlacement={this.saveShipPositions}
           shots={this.state.shots}
           onShot={this.recordShot} />
         <GameBoard 
           player="player2"
+          positions={this.state.positions.player2}
+          onShipPlacement={this.saveShipPositions}
           shots={this.state.shots}
           onShot={this.recordShot} />
       </div>
@@ -77,6 +93,14 @@ export default class Game extends Component {
   shot = {
     shootingPlayer: string,
     position: string,
-    hit: shipName or false
   }
 */
+
+const shipIfHit = (position, positions) => {
+  for (let ship in positions) {
+    if (positions[ship].includes(position)) {
+      return ship;
+    }
+  }
+  return false;
+};

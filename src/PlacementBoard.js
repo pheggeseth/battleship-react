@@ -9,13 +9,6 @@ export default class PlacementBoard extends Component {
   constructor() {
     super();
     this.state = {
-      shipPositions: {
-        carrier: [],
-        battleship: [],
-        cruiser: [],
-        submarine: [],
-        destroyer: []
-      },
       currentShip: '',
       currentDirection: '',
       hovering: []
@@ -29,10 +22,11 @@ export default class PlacementBoard extends Component {
 
   getHoveringPositions(startPosition) {
     const s = this.state;
+    const p = this.props;
     if (!s.currentShip || !s.currentDirection) return [];
     const currentShipSize = shipSizes[s.currentShip];
     const positions = nullArray(currentShipSize).map(addPositions(startPosition, s.currentDirection));
-    const nonCurrentShipPositions = _.flatten(_.values(_.omit(s.shipPositions, s.currentShip)));
+    const nonCurrentShipPositions = _.flatten(_.values(_.omit(p.shipPositions, s.currentShip)));
 
     return positions.map(flagIfOverlapping(nonCurrentShipPositions));
   }
@@ -50,14 +44,15 @@ export default class PlacementBoard extends Component {
   saveCurrentShipPositions() {
     if(invalidHoveringPosition(this.state.hovering)) return;
 
-    this.setState(p => { // p is prevState
-      p.shipPositions[p.currentShip] = p.hovering;
-      return {
-        shipPositions: p.shipPositions,
-        hovering: []
-      };
+    this.props.onClick({
+      name: this.state.currentShip,
+      positions: this.state.hovering
     });
-  }
+
+    this.setState({
+      hovering: []
+    });
+  } // end saveCurrentShipPositions
 
   setCurrentShip(newShip) {
     this.setState({
@@ -74,14 +69,14 @@ export default class PlacementBoard extends Component {
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
-    const shipPositionsFlatArray = _.flatten(_.values(this.state.shipPositions));
+    const shipPositionsFlatArray = _.flatten(_.values(this.props.shipPositions));
     const hoveringPositions = this.state.hovering;
     const hoveringOffBoard = !hoveringPositions.every(position => position); // true if any hovering positions are null
-    
+
     for(let i = 0; i < 100; i++) {
       const squarePosition = positionFromIndex(i); // convert the index to the appropriate board position, ie: 0 -> 'A1', 99 -> 'J10'
       
-      let color = 'lightblue'; // default square color
+      let color = 'powderblue'; // default square color
 
       // squares with ships in them should be green
       if (shipPositionsFlatArray.includes(squarePosition)) color = 'lightgreen';
@@ -104,15 +99,27 @@ export default class PlacementBoard extends Component {
       );
     } // end for loop
 
+    let confirmButton;
+    if (allShipsPlaced(this.props.shipPositions)) {
+      confirmButton = <button onClick={this.props.onReady}>Ready to Play</button>;
+    }
+    
+
     return (
       <div>
         <Board>
           {squares}
         </Board>
+        <ShipSelectors 
+          currentShip={this.state.currentShip}
+          currentDirection={this.state.currentDirection}
+          changeShip={this.setCurrentShip}
+          changeDirection={this.setCurrentDirection} />
+        {confirmButton}
       </div>
     );
-  }
-}
+  } // end render
+} // end PlacementBoard
 
 // GLOBAL VARIABLES & FUNCTIONS
 const shipSizes = Object.freeze({
@@ -152,3 +159,5 @@ const flagIfOverlapping = positions => position => positions.includes(position) 
 const isInvalid = position => position === null || position.includes('!');
 
 const invalidHoveringPosition = positions => !positions.length || _.some(positions, isInvalid);
+
+const allShipsPlaced = ships => Object.values(ships).every(ship => ship.length);
