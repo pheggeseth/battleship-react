@@ -13,17 +13,6 @@ const GameGrid  = styled.div`
   grid-gap: 10px;
 `;
 
-// const EnemyHits = styled.div`
-//   height: 100%;
-//   width: 100%;
-//   border: 1px solid;
-//   box-sizing: border-box;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   grid-area: auto / auto / span 2 / span 1;
-// `;
-
 const ChatHistory = styled.div`
   height: 100%;
   width: 100%;
@@ -56,12 +45,8 @@ const shipIfHit = (position, positions) => {
 export default class GameBoard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      readyToPlay: false // should be set to false to start
-    };
     this.handleShot = this.handleShot.bind(this);
     this.handleShipPlacement = this.handleShipPlacement.bind(this);
-    // this.readyToPlay = this.readyToPlay.bind(this);
     this.handleReady = this.handleReady.bind(this);
   } // end constructor
 
@@ -72,15 +57,6 @@ export default class GameBoard extends Component {
   handleReady() {
     this.props.onReady(this.props.player);
   }
-
-  // readyToPlay() {
-  //   this.setState({
-  //     readyToPlay: true
-  //   });
-  //   console.log(`${this.props.player} ready`);
-  //   // TODO: notify socket.io of ready to play, send positions
-  //   // display attack board when other player is ready to play
-  // }
 
   handleShot(position) {
     if (this.props.shots.find(shot => shot.shootingPlayer === this.props.player && shot.position === position)) return;
@@ -123,7 +99,6 @@ export default class GameBoard extends Component {
         {homeBoard}
         {attackBoard}
         {chatHistory}
-        {/* {enemyHits} */}
         {chatPrompt}
       </GameGrid>
     );
