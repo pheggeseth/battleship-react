@@ -20,6 +20,7 @@ const GameGrid  = styled.div`
 const ChatHistory = styled.div`
   // height: 150px;
   width: 100%;
+  background-color: white;
   padding: 10px;
   border: 1px solid;
   box-sizing: border-box;
