@@ -12,7 +12,7 @@ const GameContainer = styled.div`
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 2px 2px rgba(0,0,0,0.5);
-  margin: 0 auto;
+  margin: 15px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
