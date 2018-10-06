@@ -8,43 +8,37 @@ export default class AttackBoard extends Component {
     this.state = {
       hovering: null
     };
-    this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
   
-  toggleSquareHover(e) {
+  toggleSquareHover = event => {
     let hovering;
-    if (e.type === 'mouseleave') hovering = null;
-    if (e.type === 'mouseenter') hovering = e.target.dataset.position;
+    if (event.type === 'mouseleave') hovering = null;
+    if (event.type === 'mouseenter') hovering = event.target.dataset.position;
     this.setState({
       hovering: hovering
     });
-  }
+  };
 
-  handleClick(e) {
-    this.props.onClick(e.target.dataset.position);
-  }
+  handleClick = event => {
+    this.props.onClick(this.props.player, event.target.dataset.position);
+  };
   
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
     const squares = [];
     for(let i = 0; i < 100; i++) {
       let position = positionFromIndex(i);
-      if (this.props.gameStart) {
-        let style = getBackgroundColor(position, this.props.shots);
-        if (style.backgroundColor === 'powderblue' && this.state.hovering === position) {
-          style.backgroundColor = 'lightyellow';
-        }
-        squares.push(
-          <Square key={position} 
-            data-position={position} 
-            style={style} 
-            onMouseEnter={this.toggleSquareHover}
-            onMouseLeave={this.toggleSquareHover}
-            onClick={this.handleClick} />);
-      } else {
-        squares.push(<Square key={position} data-position={position} />)
+      let style = getBackgroundColor(position, this.props.shots);
+      if (style.backgroundColor === 'powderblue' && this.state.hovering === position) {
+        style.backgroundColor = 'lightyellow';
       }
+      squares.push(
+        <Square key={position} 
+          data-position={position} 
+          style={style} 
+          onMouseEnter={this.toggleSquareHover}
+          onMouseLeave={this.toggleSquareHover}
+          onClick={this.handleClick} />);
     }
     
     return <Board>{squares}</Board>;

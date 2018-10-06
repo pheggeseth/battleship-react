@@ -33,47 +33,37 @@ const ChatPrompt = styled.div`
   align-items: center;
 `;
 
-const shipIfHit = (position, positions) => {
-  for (let ship in positions) {
-    if (positions[ship].includes(position)) {
-      return ship;
-    }
-  }
-  return false;
-};
-
 export default class GameBoard extends Component {
   constructor(props) {
     super(props);
-    this.handleShot = this.handleShot.bind(this);
-    this.handleShipPlacement = this.handleShipPlacement.bind(this);
-    this.handleReady = this.handleReady.bind(this);
   } // end constructor
 
-  handleShipPlacement(ship) {
+  handleShipPlacement = ship => {
     this.props.onShipPlacement(this.props.player, ship);
-  }
+  };
 
-  handleReady() {
+  handleReady = () => {
     this.props.onReady(this.props.player);
-  }
+  };
 
-  handleShot(position) {
+  handleShot = position => {
     if (this.props.shots.find(shot => shot.shootingPlayer === this.props.player && shot.position === position)) return;
 
     this.props.onShot({
       shootingPlayer: this.props.player,
-      position: position,
-      hit: shipIfHit(position, this.props.positions)
+      position: position
     });
-  }
+  };
   
   render() {
     let placementBoard, homeBoard, attackBoard, chatHistory, chatPrompt;
     const player = this.props.player;
     const shots = this.props.shots;
     const positions = this.props.positions;
+
     if (this.props.ready[this.props.player]) {
+      // if the player has placed all of their ships and is ready to play,
+      // render the game start components
       homeBoard = <HomeBoard positions={positions} shots={shots.filter(shotsEnemyMade(player))}/>;
       attackBoard = <AttackBoard 
         // only send shots enemy has made, for rendering
@@ -87,6 +77,7 @@ export default class GameBoard extends Component {
           Chat Prompt
         </ChatPrompt>;
     } else {
+      // or if the player isn't ready yet, render the ship placement board
       placementBoard = <PlacementBoard 
         shipPositions={positions} 
         onClick={this.handleShipPlacement} 

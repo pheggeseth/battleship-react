@@ -13,8 +13,9 @@ export function positionFromIndex(index) {
 export default class Board extends Component {
 	render() {
 		return (
-			<BoardGrid gridPosition={this.props.gridPosition}>
-				<div></div>
+			<BoardGrid size="330px" gridPosition={this.props.gridPosition}>
+				{/* empty div for the very first square */}
+				<div></div> 
 				<ColumnLabels>{boardColumns.map(number => <Square key={number}>{number}</Square>)}</ColumnLabels>
 				<RowLabels>{boardRows.map(letter => <Square key={letter}>{letter}</Square>)}</RowLabels>
 				{this.props.children}
