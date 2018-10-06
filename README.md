@@ -1,5 +1,7 @@
-# Two-Player Real-Time Battleship web app using React.
-I am attempting to create a two-player Battleship game as an excercise in learning the details of the React framework. Ultimately, I would like it to incorporate user authentication and a real-time backend such that players will be able to log in and play games against their friends in real time.
+# React Battleship
+In preparation for starting Prime Digital Academy, I decided to work ahead by learning React on my own. I got so carried away, that I ended up building a two-player Battleship game!
+
+
 
 ## General Checklist
 User Authentication

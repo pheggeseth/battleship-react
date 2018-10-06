@@ -8,22 +8,20 @@ export default class AttackBoard extends Component {
     this.state = {
       hovering: null
     };
-    this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
   
-  toggleSquareHover(e) {
+  toggleSquareHover = event => {
     let hovering;
-    if (e.type === 'mouseleave') hovering = null;
-    if (e.type === 'mouseenter') hovering = e.target.dataset.position;
+    if (event.type === 'mouseleave') hovering = null;
+    if (event.type === 'mouseenter') hovering = event.target.dataset.position;
     this.setState({
       hovering: hovering
     });
-  }
+  };
 
-  handleClick(e) {
-    this.props.onClick(this.props.player, e.target.dataset.position);
-  }
+  handleClick = event => {
+    this.props.onClick(this.props.player, event.target.dataset.position);
+  };
   
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'

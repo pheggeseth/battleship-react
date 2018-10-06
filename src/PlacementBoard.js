@@ -1,27 +1,20 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import Board, { positionFromIndex } from './Board';
-import { Square } from './BoardStyles';
+import { Square, Button } from './BoardStyles';
 import ShipSelectors, { shipColors } from './ShipSelectors';
 
-// REACT COMPONENT
 export default class PlacementBoard extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       currentShip: '',
       currentDirection: '',
       hovering: []
     };
-    this.toggleSquareHover = this.toggleSquareHover.bind(this);
-    this.getHoveringPositions = this.getHoveringPositions.bind(this);
-    this.saveCurrentShipPositions = this.saveCurrentShipPositions.bind(this);
-    this.setCurrentShip = this.setCurrentShip.bind(this);
-    this.setCurrentDirection = this.setCurrentDirection.bind(this);
-    this.handleReady = this.handleReady.bind(this);
   }
 
-  getHoveringPositions(startPosition) {
+  getHoveringPositions = startPosition => {
     const s = this.state;
     const p = this.props;
     if (!s.currentShip || !s.currentDirection) return [];
@@ -30,19 +23,19 @@ export default class PlacementBoard extends Component {
     const nonCurrentShipPositions = _.flatten(_.values(_.omit(p.shipPositions, s.currentShip)));
 
     return positions.map(flagIfOverlapping(nonCurrentShipPositions));
-  }
+  }; // end getHoveringPositions
 
-  toggleSquareHover(e) {
+  toggleSquareHover = event => {
     let hovering;
-    if (e.type === 'mouseleave') hovering = [];
-    if (e.type === 'mouseenter') hovering = this.getHoveringPositions(e.target.dataset.position);
+    if (event.type === 'mouseleave') hovering = [];
+    if (event.type === 'mouseenter') hovering = this.getHoveringPositions(event.target.dataset.position);
     
     this.setState({
       hovering: hovering
     });
-  }
+  }; // end toggleSquareHover
 
-  saveCurrentShipPositions() {
+  saveCurrentShipPositions = () => {
     if(invalidHoveringPosition(this.state.hovering)) return;
 
     this.props.onClick(this.props.player, {
@@ -53,23 +46,13 @@ export default class PlacementBoard extends Component {
     this.setState({
       hovering: []
     });
-  } // end saveCurrentShipPositions
+  }; // end saveCurrentShipPositions
 
-  setCurrentShip(newShip) {
-    this.setState({
-      currentShip: newShip
-    });
-  }
+  setCurrentShip = newShip => this.setState({ currentShip: newShip });
 
-  setCurrentDirection(newDirection) {
-    this.setState({
-      currentDirection: newDirection
-    });
-  }
+  setCurrentDirection = newDirection => this.setState({ currentDirection: newDirection });
 
-  handleReady() {
-    this.props.onReady(this.props.player);
-  }
+  handleReady = () => this.props.onReady(this.props.player);
 
   render() {
     // fill squares array with 100 Square components, each with its own position 'A1'-'J10'
@@ -83,8 +66,7 @@ export default class PlacementBoard extends Component {
       
       let color = 'powderblue'; // default square color
 
-      // squares with ships in them should be green
-      // if (shipPositionsFlatArray.includes(squarePosition)) color = 'lightgreen';
+      // squares with ships in them should be colored appropriately
       for (let ship in this.props.shipPositions) {
         if (this.props.shipPositions[ship].includes(squarePosition)) {
           color = shipColors[ship];
@@ -111,10 +93,9 @@ export default class PlacementBoard extends Component {
 
     let confirmButton;
     if (allShipsPlaced(this.props.shipPositions)) {
-      confirmButton = <button onClick={this.handleReady}>Ready to Play</button>;
+      confirmButton = <Button onClick={this.handleReady}>Ready</Button>;
     }
     
-
     return (
       <div>
         <Board>
@@ -125,7 +106,9 @@ export default class PlacementBoard extends Component {
           currentDirection={this.state.currentDirection}
           changeShip={this.setCurrentShip}
           changeDirection={this.setCurrentDirection} />
-        {confirmButton}
+        <div style={{textAlign: 'center'}}>
+          {confirmButton}
+        </div>
       </div>
     );
   } // end render

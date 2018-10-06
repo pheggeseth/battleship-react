@@ -5,7 +5,6 @@ import { Square } from './BoardStyles';
 export default function BlankBoard() {
   const squares = [];
   for (let i = 0; i < 100; i++) {
-    // position = positionFromIndex(i);
     squares.push(<Square key={i} />)
   }
   return <Board>{squares}</Board>;
